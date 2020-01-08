@@ -1,0 +1,2 @@
+rootProject.name = 'metazion-essence'
+include 'metazion-essence-share'

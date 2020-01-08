@@ -1,0 +1,59 @@
+buildscript {
+    ext {
+        springBootVersion = '2.2.6.RELEASE'
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: "${springBootVersion}"
+    }
+}
+
+allprojects {
+    group = 'com.metazion.essence'
+    version = '1.0-SNAPSHOT'
+}
+
+subprojects {
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java'
+    apply plugin: 'pmd'
+    apply plugin: 'maven-publish'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: "$springBootVersion"
+    }
+
+    pmd {
+        ruleSetFiles = files("$rootProject.projectDir/config/pmd/ruleset.xml")
+        ruleSets = []
+        ignoreFailures = false
+    }
+
+    jar {
+        enabled = true
+    }
+
+    bootJar {
+        enabled = false
+    }
+
+    publishing {
+        publications {
+            local(MavenPublication){
+                from components.java
+            }
+        }
+    }
+}
