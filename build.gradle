@@ -51,7 +51,7 @@ subprojects {
 
     publishing {
         publications {
-            local(MavenPublication){
+            local(MavenPublication) {
                 from components.java
             }
         }
