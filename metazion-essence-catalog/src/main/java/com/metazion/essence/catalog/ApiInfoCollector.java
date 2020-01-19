@@ -9,17 +9,21 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 @Component
 public class ApiInfoCollector {
 
     private ApplicationContext applicationContext;
-
     private ApiConfigProperties apiConfigProperties;
 
-    private Map<String, ApiClassInfo> classInfos = new HashMap<>();
+    private Map<String, ApiClassInfo> classInfos = new TreeMap<>();
+
+    private List<String> apiList = new ArrayList<>();
+    private Map<String, ApiMethodInfo> apiInfos = new TreeMap<>();
 
     @Autowired
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -35,11 +39,48 @@ public class ApiInfoCollector {
         return classInfos;
     }
 
-    public void collect() {
+    public List<String> getApiList() {
+        return apiList;
+    }
+
+    public Map<String, ApiMethodInfo> getApiInfos() {
+        return apiInfos;
+    }
+
+    public ApiMethodInfo getApiInfo(String api) {
+        return apiInfos.get(api);
+    }
+
+    public void perform() {
+        collect();
+        tidy();
+    }
+
+    private void collect() {
         Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(Controller.class);
         for (Object value : beansWithAnnotation.values()) {
             if (filterClassInfo(value.getClass())) {
                 collectClassInfo(value.getClass());
+            }
+        }
+    }
+
+    private void tidy() {
+        for (ApiClassInfo classInfo : classInfos.values()) {
+            for (ApiMethodInfo methodInfo : classInfo.getMethodInfos()) {
+                for (String superiorPath : classInfo.getPaths()) {
+                    int nodePathLength = methodInfo.getPaths().length;
+                    for (int i = 0; i < nodePathLength; ++i) {
+                        String path = superiorPath + methodInfo.getPaths()[i];
+                        methodInfo.getPaths()[i] = path;
+
+                        for (String type : methodInfo.getTypes()) {
+                            String api = path + " " + type;
+                            apiList.add(api);
+                            apiInfos.put(api, methodInfo);
+                        }
+                    }
+                }
             }
         }
     }
@@ -61,7 +102,9 @@ public class ApiInfoCollector {
 
         if (clazz.isAnnotationPresent(RequestMapping.class)) {
             RequestMapping requestMapping = AnnotationUtils.findAnnotation(clazz, RequestMapping.class);
-            classInfo.setPaths(requestMapping.path());
+            classInfo.setPaths(ensureNonEmptyPaths(requestMapping.path()));
+        } else {
+            classInfo.setPaths("");
         }
 
         if (clazz.isAnnotationPresent(RestController.class)) {
@@ -112,22 +155,36 @@ public class ApiInfoCollector {
 
     private void collectAnyMethodInfo(Method method, ApiMethodInfo methodInfo) {
         RequestMapping annotation = AnnotationUtils.findAnnotation(method, RequestMapping.class);
-        String type = annotation.method().length > 0 ? annotation.method()[0].toString() : "ANY";
-        methodInfo.setType(type);
-        methodInfo.setPaths(annotation.path());
+
+        int methodLength = annotation.method().length;
+        if (methodLength > 0) {
+            String[] types = new String[methodLength];
+            for (int i = 0; i < methodLength; ++i) {
+                types[i] = annotation.method()[i].toString();
+            }
+            methodInfo.setTypes(types);
+        } else {
+            methodInfo.setTypes("ANY");
+        }
+
+        methodInfo.setPaths(ensureNonEmptyPaths(annotation.path()));
     }
 
     private void collectGetMethodInfo(Method method, ApiMethodInfo methodInfo) {
-        methodInfo.setType("GET");
+        methodInfo.setTypes("GET");
 
         GetMapping annotation = AnnotationUtils.findAnnotation(method, GetMapping.class);
-        methodInfo.setPaths(annotation.path());
+        methodInfo.setPaths(ensureNonEmptyPaths(annotation.path()));
     }
 
     private void collectPutMethodInfo(Method method, ApiMethodInfo methodInfo) {
-        methodInfo.setType("PUT");
+        methodInfo.setTypes("PUT");
 
         PutMapping annotation = AnnotationUtils.findAnnotation(method, PutMapping.class);
-        methodInfo.setPaths(annotation.path());
+        methodInfo.setPaths(ensureNonEmptyPaths(annotation.path()));
+    }
+
+    private String[] ensureNonEmptyPaths(String... paths) {
+        return paths.length > 0 ? paths : new String[]{""};
     }
 }

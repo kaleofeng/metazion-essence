@@ -1,15 +1,19 @@
 package com.metazion.essence.catalog.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.metazion.essence.catalog.ApiClassInfo;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.metazion.essence.catalog.ApiInfoCollector;
+import com.metazion.essence.catalog.ApiMethodInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/apis")
 public class ApiInfoController {
 
     private ApiInfoCollector apiInfoCollector;
@@ -19,13 +23,26 @@ public class ApiInfoController {
         this.apiInfoCollector = apiInfoCollector;
     }
 
-    @GetMapping("/all")
-    public String all() {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (ApiClassInfo classInfo : apiInfoCollector.getClassInfos().values()) {
-            stringBuilder.append(JSON.toJSONString(classInfo));
-            stringBuilder.append(System.lineSeparator());
-        }
-        return stringBuilder.toString();
+    @GetMapping("/list")
+    public String list() {
+        return JSON.toJSONString(apiInfoCollector.getApiList(), SerializerFeature.DisableCircularReferenceDetect);
+    }
+
+    @GetMapping("/details")
+    public String details() {
+        return JSON.toJSONString(apiInfoCollector.getApiInfos(), SerializerFeature.DisableCircularReferenceDetect);
+    }
+
+    @GetMapping("/detail")
+    public String details(@RequestParam("api") String api) {
+        ApiMethodInfo methodInfo = apiInfoCollector.getApiInfo(api);
+        return Optional.ofNullable(methodInfo)
+                   .map(t -> JSON.toJSONString(t, SerializerFeature.DisableCircularReferenceDetect))
+                   .orElse("");
+    }
+
+    @GetMapping("/controllers")
+    public String controllers() {
+        return JSON.toJSONString(apiInfoCollector.getClassInfos(), SerializerFeature.DisableCircularReferenceDetect);
     }
 }

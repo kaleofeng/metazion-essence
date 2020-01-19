@@ -10,7 +10,7 @@ public class ApiMethodInfo {
 
     private String name = "";
     private String[] paths = {};
-    private String type = "";
+    private String[] types = {};
     private boolean restful = false;
     private String returnType = "";
     private List<ApiParameterInfo> parameterInfos = new ArrayList<>();
@@ -31,12 +31,12 @@ public class ApiMethodInfo {
         this.paths = paths.clone();
     }
 
-    public String getType() {
-        return type;
+    public String[] getTypes() {
+        return types;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTypes(String... types) {
+        this.types = types.clone();
     }
 
     public boolean isRestful() {
@@ -65,10 +65,5 @@ public class ApiMethodInfo {
 
     public void addParameterInfo(ApiParameterInfo parameterInfo) {
         this.parameterInfos.add(parameterInfo);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s %s", type, name);
     }
 }
