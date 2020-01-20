@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 @Component
 public class ApiInfoCollector {
@@ -22,7 +22,7 @@ public class ApiInfoCollector {
 
     private Map<String, ApiClassInfo> classInfos = new TreeMap<>();
 
-    private List<String> apiList = new ArrayList<>();
+    private Set<String> apis = new TreeSet<>();
     private Map<String, ApiMethodInfo> apiInfos = new TreeMap<>();
 
     @Autowired
@@ -39,8 +39,8 @@ public class ApiInfoCollector {
         return classInfos;
     }
 
-    public List<String> getApiList() {
-        return apiList;
+    public Set<String> getApis() {
+        return apis;
     }
 
     public Map<String, ApiMethodInfo> getApiInfos() {
@@ -76,7 +76,7 @@ public class ApiInfoCollector {
 
                         for (String type : methodInfo.getTypes()) {
                             String api = path + " " + type;
-                            apiList.add(api);
+                            apis.add(api);
                             apiInfos.put(api, methodInfo);
                         }
                     }

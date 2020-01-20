@@ -25,7 +25,7 @@ public class ApiInfoController {
 
     @GetMapping("/list")
     public String list() {
-        return JSON.toJSONString(apiInfoCollector.getApiList(), SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(apiInfoCollector.getApis(), SerializerFeature.DisableCircularReferenceDetect);
     }
 
     @GetMapping("/details")
