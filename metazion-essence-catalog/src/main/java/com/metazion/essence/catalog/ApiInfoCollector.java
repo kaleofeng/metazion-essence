@@ -128,8 +128,8 @@ public class ApiInfoCollector {
                 classInfo.addMethodInfo(methodInfo);
             }
 
-            if (method.isAnnotationPresent(PutMapping.class)) {
-                collectPutMethodInfo(method, methodInfo);
+            if (method.isAnnotationPresent(PostMapping.class)) {
+                collectPostMethodInfo(method, methodInfo);
                 classInfo.addMethodInfo(methodInfo);
             }
         }
@@ -177,10 +177,10 @@ public class ApiInfoCollector {
         methodInfo.setPaths(ensureNonEmptyPaths(annotation.path()));
     }
 
-    private void collectPutMethodInfo(Method method, ApiMethodInfo methodInfo) {
-        methodInfo.setTypes("PUT");
+    private void collectPostMethodInfo(Method method, ApiMethodInfo methodInfo) {
+        methodInfo.setTypes("POST");
 
-        PutMapping annotation = AnnotationUtils.findAnnotation(method, PutMapping.class);
+        PostMapping annotation = AnnotationUtils.findAnnotation(method, PostMapping.class);
         methodInfo.setPaths(ensureNonEmptyPaths(annotation.path()));
     }
 
