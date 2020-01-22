@@ -18,7 +18,7 @@ import java.util.TreeSet;
 public class ApiInfoCollector {
 
     private ApplicationContext applicationContext;
-    private ApiConfigProperties apiConfigProperties;
+    private ApiConfigurationProperties apiConfigurationProperties;
 
     private Map<String, ApiClassInfo> classInfos = new TreeMap<>();
 
@@ -31,8 +31,8 @@ public class ApiInfoCollector {
     }
 
     @Autowired
-    public void setApiConfigProperties(ApiConfigProperties apiConfigProperties) {
-        this.apiConfigProperties = apiConfigProperties;
+    public void setApiConfigurationProperties(ApiConfigurationProperties apiConfigurationProperties) {
+        this.apiConfigurationProperties = apiConfigurationProperties;
     }
 
     public Map<String, ApiClassInfo> getClassInfos() {
@@ -86,7 +86,7 @@ public class ApiInfoCollector {
     }
 
     private boolean filterClassInfo(Class<?> clazz) {
-        String[] prefixes = apiConfigProperties.getControllerPrefixes();
+        String[] prefixes = apiConfigurationProperties.getControllerPrefixes();
         for (String prefix : prefixes) {
             if (clazz.getCanonicalName().startsWith(prefix)) {
                 return true;

@@ -3,7 +3,7 @@ package com.metazion.essence.catalog;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("metazion.essence.catalog")
-public class ApiConfigProperties {
+public class ApiConfigurationProperties {
 
     private String[] controllerPrefixes = {};
 

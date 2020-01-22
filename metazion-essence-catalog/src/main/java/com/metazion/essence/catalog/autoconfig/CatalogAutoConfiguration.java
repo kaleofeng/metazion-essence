@@ -1,6 +1,6 @@
 package com.metazion.essence.catalog.autoconfig;
 
-import com.metazion.essence.catalog.ApiConfigProperties;
+import com.metazion.essence.catalog.ApiConfigurationProperties;
 import com.metazion.essence.catalog.ApiInfoCollector;
 import com.metazion.essence.catalog.controller.ApiInfoController;
 import com.metazion.essence.catalog.runner.ApiInfoRunner;
@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableConfigurationProperties(ApiConfigProperties.class)
-@ConditionalOnProperty(prefix = "metazion.essence.catalog", name = "enable", havingValue = "true")
+@EnableConfigurationProperties(ApiConfigurationProperties.class)
+@ConditionalOnProperty(name = "metazion.essence.catalog.enabled", havingValue = "true", matchIfMissing = false)
 public class CatalogAutoConfiguration {
 
     @Bean
