@@ -10,15 +10,19 @@ public class HashKit {
 
     private static final Logger logger = LoggerFactory.getLogger(HashKit.class);
 
-    public static String shaHexString(byte[] bytes, String algorithm) {
+    public static byte[] shaBytes(byte[] bytes, String algorithm) {
         try {
             MessageDigest digest = MessageDigest.getInstance(algorithm);
             digest.update(bytes);
-            byte[] result = digest.digest();
-            return StringKit.bytesToHex(result);
+            return digest.digest();
         } catch (NoSuchAlgorithmException e) {
             logger.debug(e.toString());
         }
-        return "";
+        return "".getBytes();
+    }
+
+    public static String shaHexString(byte[] bytes, String algorithm) {
+        byte[] result = shaBytes(bytes, algorithm);
+        return StringKit.bytesToHex(result);
     }
 }
