@@ -34,7 +34,7 @@ public class ApiInfoController {
     }
 
     @GetMapping("/detail")
-    public String details(@RequestParam("api") String api) {
+    public String detail(@RequestParam("api") String api) {
         ApiMethodInfo methodInfo = apiInfoCollector.getApiInfo(api);
         return Optional.ofNullable(methodInfo)
                    .map(t -> JSON.toJSONString(t, SerializerFeature.DisableCircularReferenceDetect))

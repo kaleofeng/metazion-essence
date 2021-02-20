@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableConfigurationProperties(ApiConfigurationProperties.class)
-@ConditionalOnProperty(name = "metazion.essence.catalog.enabled", havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(name = "metazion.essence.catalog.enabled", havingValue = "true")
 public class CatalogAutoConfiguration {
 
     @Bean

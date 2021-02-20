@@ -8,11 +8,11 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ApiMethodInfo {
 
-    private String name = "";
-    private String[] paths = {};
-    private String[] types = {};
-    private boolean restful = false;
-    private String returnType = "";
+    private String name;
+    private String[] paths;
+    private String[] types;
+    private boolean restful;
+    private TypeClassInfo returnType;
     private List<ApiParameterInfo> parameterInfos = new ArrayList<>();
 
     public String getName() {
@@ -47,11 +47,11 @@ public class ApiMethodInfo {
         this.restful = restful;
     }
 
-    public String getReturnType() {
+    public TypeClassInfo getReturnType() {
         return returnType;
     }
 
-    public void setReturnType(String returnType) {
+    public void setReturnType(TypeClassInfo returnType) {
         this.returnType = returnType;
     }
 

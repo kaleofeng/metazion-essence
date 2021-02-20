@@ -7,8 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.*;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -17,13 +16,11 @@ import java.util.TreeSet;
 @Component
 public class ApiInfoCollector {
 
+    private final Map<String, ApiClassInfo> classInfos = new TreeMap<>();
+    private final Set<String> apis = new TreeSet<>();
+    private final Map<String, ApiMethodInfo> apiInfos = new TreeMap<>();
     private ApplicationContext applicationContext;
     private ApiConfigurationProperties apiConfigurationProperties;
-
-    private Map<String, ApiClassInfo> classInfos = new TreeMap<>();
-
-    private Set<String> apis = new TreeSet<>();
-    private Map<String, ApiMethodInfo> apiInfos = new TreeMap<>();
 
     @Autowired
     public void setApplicationContext(ApplicationContext applicationContext) {
@@ -102,6 +99,7 @@ public class ApiInfoCollector {
 
         if (clazz.isAnnotationPresent(RequestMapping.class)) {
             RequestMapping requestMapping = AnnotationUtils.findAnnotation(clazz, RequestMapping.class);
+            assert requestMapping != null;
             classInfo.setPaths(ensureNonEmptyPaths(requestMapping.path()));
         } else {
             classInfo.setPaths("");
@@ -139,15 +137,18 @@ public class ApiInfoCollector {
 
     private void collectMethodCommonInfo(Method method, ApiMethodInfo methodInfo) {
         methodInfo.setName(method.getName());
-        methodInfo.setReturnType(method.getReturnType().getCanonicalName());
+        methodInfo.setReturnType(getTypeClassInfo(method.getReturnType(), method.getGenericReturnType()));
 
         if (!methodInfo.isRestful() && method.isAnnotationPresent(ResponseBody.class)) {
             methodInfo.setRestful(true);
         }
 
-        for (Parameter parameter : method.getParameters()) {
+        int paramCount = method.getParameterCount();
+        for (int i = 0; i < paramCount; ++i) {
+            Parameter parameter = method.getParameters()[i];
+            Type type = method.getGenericParameterTypes()[i];
             ApiParameterInfo parameterInfo = new ApiParameterInfo();
-            parameterInfo.setType(parameter.getType().getCanonicalName());
+            parameterInfo.setType(getTypeClassInfo(parameter.getType(), type));
             parameterInfo.setName(parameter.getName());
             methodInfo.addParameterInfo(parameterInfo);
         }
@@ -155,6 +156,7 @@ public class ApiInfoCollector {
 
     private void collectAnyMethodInfo(Method method, ApiMethodInfo methodInfo) {
         RequestMapping annotation = AnnotationUtils.findAnnotation(method, RequestMapping.class);
+        assert annotation != null;
 
         int methodLength = annotation.method().length;
         if (methodLength > 0) {
@@ -174,6 +176,7 @@ public class ApiInfoCollector {
         methodInfo.setTypes("GET");
 
         GetMapping annotation = AnnotationUtils.findAnnotation(method, GetMapping.class);
+        assert annotation != null;
         methodInfo.setPaths(ensureNonEmptyPaths(annotation.path()));
     }
 
@@ -181,7 +184,32 @@ public class ApiInfoCollector {
         methodInfo.setTypes("POST");
 
         PostMapping annotation = AnnotationUtils.findAnnotation(method, PostMapping.class);
+        assert annotation != null;
         methodInfo.setPaths(ensureNonEmptyPaths(annotation.path()));
+    }
+
+    private TypeClassInfo getTypeClassInfo(Class<?> clazz, Type type) {
+        TypeClassInfo classInfo = new TypeClassInfo();
+        classInfo.setCanonicalName(clazz.getCanonicalName());
+
+        if (type instanceof ParameterizedType) {
+            String typeName = type.getTypeName()
+                                  .replaceAll("<", "&lt;")
+                                  .replaceAll(">", "&gt;");
+            classInfo.setCanonicalName(typeName);
+        }
+
+        if (!clazz.isPrimitive() && !clazz.getCanonicalName().equals("java.lang.String")) {
+            Field[] declaredFields = clazz.getDeclaredFields();
+            for (Field field : declaredFields) {
+                TypeFieldInfo fieldInfo = new TypeFieldInfo();
+                fieldInfo.setName(field.getName());
+                fieldInfo.setType(getTypeClassInfo(field.getType(), field.getGenericType()));
+                classInfo.addFieldInfos(fieldInfo);
+            }
+        }
+
+        return classInfo;
     }
 
     private String[] ensureNonEmptyPaths(String... paths) {

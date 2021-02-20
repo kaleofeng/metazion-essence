@@ -8,10 +8,10 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ApiClassInfo {
 
-    private String simpleName = "";
-    private String canonicalName = "";
-    private String[] paths = {};
-    private boolean restful = false;
+    private String simpleName;
+    private String canonicalName;
+    private String[] paths;
+    private boolean restful;
     private List<ApiMethodInfo> methodInfos = new ArrayList<>();
 
     public String getSimpleName() {

@@ -3,7 +3,7 @@ package com.metazion.essence.catalog;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class ApiParameterInfo {
+public class TypeFieldInfo {
 
     private String name;
     private TypeClassInfo type;
