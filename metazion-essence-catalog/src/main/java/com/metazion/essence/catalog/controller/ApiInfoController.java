@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/apis")
+@RequestMapping("/_apis_")
 public class ApiInfoController {
 
     private ApiInfoCollector apiInfoCollector;
