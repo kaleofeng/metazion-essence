@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 @Component
 public class ApiInfoCollector {
@@ -83,13 +84,21 @@ public class ApiInfoCollector {
     }
 
     private boolean filterClassInfo(Class<?> clazz) {
-        String[] prefixes = apiConfigurationProperties.getControllerPrefixes();
-        for (String prefix : prefixes) {
-            if (clazz.getCanonicalName().startsWith(prefix)) {
+        String[] excludePatterns = apiConfigurationProperties.getControllerExcludePatterns();
+        for (String pattern : excludePatterns) {
+            if (checkPatternMatch(pattern, clazz.getCanonicalName())) {
+                return false;
+            }
+        }
+
+        String[] includePatterns = apiConfigurationProperties.getControllerIncludePatterns();
+        for (String pattern : includePatterns) {
+            if (checkPatternMatch(pattern, clazz.getCanonicalName())) {
                 return true;
             }
         }
-        return prefixes.length == 0;
+
+        return includePatterns.length == 0;
     }
 
     private void collectClassInfo(Class<?> clazz) {
@@ -214,5 +223,13 @@ public class ApiInfoCollector {
 
     private String[] ensureNonEmptyPaths(String... paths) {
         return paths.length > 0 ? paths : new String[]{""};
+    }
+
+    public boolean checkPatternMatch(String regex, String input) {
+        try {
+            return Pattern.matches(regex, input);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
