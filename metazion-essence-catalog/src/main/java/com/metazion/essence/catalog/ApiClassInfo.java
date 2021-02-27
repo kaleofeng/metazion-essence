@@ -31,7 +31,7 @@ public class ApiClassInfo {
     }
 
     public String[] getPaths() {
-        return paths;
+        return paths.clone();
     }
 
     public void setPaths(String... paths) {

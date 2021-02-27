@@ -199,7 +199,7 @@ public class ApiInfoCollector {
             classInfo.setCanonicalName(typeName);
         }
 
-        if (!clazz.isPrimitive() && !clazz.getCanonicalName().equals("java.lang.String")) {
+        if (!clazz.isPrimitive() && !"java.lang.String".equals(clazz.getCanonicalName())) {
             Field[] declaredFields = clazz.getDeclaredFields();
             for (Field field : declaredFields) {
                 TypeFieldInfo fieldInfo = new TypeFieldInfo();

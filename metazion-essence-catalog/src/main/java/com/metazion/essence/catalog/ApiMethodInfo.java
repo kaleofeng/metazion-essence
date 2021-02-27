@@ -24,7 +24,7 @@ public class ApiMethodInfo {
     }
 
     public String[] getPaths() {
-        return paths;
+        return paths.clone();
     }
 
     public void setPaths(String... paths) {
@@ -32,7 +32,7 @@ public class ApiMethodInfo {
     }
 
     public String[] getTypes() {
-        return types;
+        return types.clone();
     }
 
     public void setTypes(String... types) {
