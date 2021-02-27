@@ -139,6 +139,21 @@ public class ApiInfoCollector {
                 collectPostMethodInfo(method, methodInfo);
                 classInfo.addMethodInfo(methodInfo);
             }
+
+            if (method.isAnnotationPresent(PutMapping.class)) {
+                collectPutMethodInfo(method, methodInfo);
+                classInfo.addMethodInfo(methodInfo);
+            }
+
+            if (method.isAnnotationPresent(PatchMapping.class)) {
+                collectPatchMethodInfo(method, methodInfo);
+                classInfo.addMethodInfo(methodInfo);
+            }
+
+            if (method.isAnnotationPresent(DeleteMapping.class)) {
+                collectDeleteMethodInfo(method, methodInfo);
+                classInfo.addMethodInfo(methodInfo);
+            }
         }
 
         classInfos.put(classInfo.getSimpleName(), classInfo);
@@ -193,6 +208,30 @@ public class ApiInfoCollector {
         methodInfo.setTypes("POST");
 
         PostMapping annotation = AnnotationUtils.findAnnotation(method, PostMapping.class);
+        assert annotation != null;
+        methodInfo.setPaths(ensureNonEmptyPaths(annotation.path()));
+    }
+
+    private void collectPutMethodInfo(Method method, ApiMethodInfo methodInfo) {
+        methodInfo.setTypes("PUT");
+
+        PutMapping annotation = AnnotationUtils.findAnnotation(method, PutMapping.class);
+        assert annotation != null;
+        methodInfo.setPaths(ensureNonEmptyPaths(annotation.path()));
+    }
+
+    private void collectPatchMethodInfo(Method method, ApiMethodInfo methodInfo) {
+        methodInfo.setTypes("PATCH");
+
+        PatchMapping annotation = AnnotationUtils.findAnnotation(method, PatchMapping.class);
+        assert annotation != null;
+        methodInfo.setPaths(ensureNonEmptyPaths(annotation.path()));
+    }
+
+    private void collectDeleteMethodInfo(Method method, ApiMethodInfo methodInfo) {
+        methodInfo.setTypes("DELETE");
+
+        DeleteMapping annotation = AnnotationUtils.findAnnotation(method, DeleteMapping.class);
         assert annotation != null;
         methodInfo.setPaths(ensureNonEmptyPaths(annotation.path()));
     }
