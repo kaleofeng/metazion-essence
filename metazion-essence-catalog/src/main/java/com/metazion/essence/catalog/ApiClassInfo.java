@@ -2,8 +2,9 @@ package com.metazion.essence.catalog;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ApiClassInfo {
@@ -12,7 +13,7 @@ public class ApiClassInfo {
     private String canonicalName;
     private String[] paths;
     private boolean restful;
-    private List<ApiMethodInfo> methodInfos = new ArrayList<>();
+    private Set<ApiMethodInfo> methodInfos = new TreeSet<>(Comparator.comparing(o -> o.getName()));
 
     public String getSimpleName() {
         return simpleName;
@@ -46,11 +47,11 @@ public class ApiClassInfo {
         this.restful = restful;
     }
 
-    public List<ApiMethodInfo> getMethodInfos() {
+    public Set<ApiMethodInfo> getMethodInfos() {
         return methodInfos;
     }
 
-    public void setMethodInfos(List<ApiMethodInfo> methodInfos) {
+    public void setMethodInfos(Set<ApiMethodInfo> methodInfos) {
         this.methodInfos = methodInfos;
     }
 

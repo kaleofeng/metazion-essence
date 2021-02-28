@@ -23,14 +23,22 @@ public class ApiInfoController {
         this.apiInfoCollector = apiInfoCollector;
     }
 
-    @GetMapping("/list")
-    public String list() {
-        return JSON.toJSONString(apiInfoCollector.getApis(), SerializerFeature.DisableCircularReferenceDetect);
+    @GetMapping("")
+    public String list(@RequestParam(value = "restful", required = false, defaultValue = "0") int restful) {
+        if (restful == 0) {
+            return JSON.toJSONString(apiInfoCollector.getApis(), SerializerFeature.DisableCircularReferenceDetect);
+        } else {
+            return JSON.toJSONString(apiInfoCollector.getRestfulApis(), SerializerFeature.DisableCircularReferenceDetect);
+        }
     }
 
     @GetMapping("/details")
-    public String details() {
-        return JSON.toJSONString(apiInfoCollector.getApiInfos(), SerializerFeature.DisableCircularReferenceDetect);
+    public String details(@RequestParam(value = "restful", required = false, defaultValue = "0") int restful) {
+        if (restful == 0) {
+            return JSON.toJSONString(apiInfoCollector.getApiInfos(), SerializerFeature.DisableCircularReferenceDetect);
+        } else {
+            return JSON.toJSONString(apiInfoCollector.getRestfulApiInfos(), SerializerFeature.DisableCircularReferenceDetect);
+        }
     }
 
     @GetMapping("/detail")

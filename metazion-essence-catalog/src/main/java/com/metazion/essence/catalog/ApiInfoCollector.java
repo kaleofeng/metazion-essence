@@ -19,7 +19,9 @@ public class ApiInfoCollector {
 
     private final Map<String, ApiClassInfo> classInfos = new TreeMap<>();
     private final Set<String> apis = new TreeSet<>();
+    private final Set<String> restfulApis = new TreeSet<>();
     private final Map<String, ApiMethodInfo> apiInfos = new TreeMap<>();
+    private final Map<String, ApiMethodInfo> restfulApiInfos = new TreeMap<>();
     private ApplicationContext applicationContext;
     private ApiConfigurationProperties apiConfigurationProperties;
 
@@ -41,8 +43,16 @@ public class ApiInfoCollector {
         return apis;
     }
 
+    public Set<String> getRestfulApis() {
+        return restfulApis;
+    }
+
     public Map<String, ApiMethodInfo> getApiInfos() {
         return apiInfos;
+    }
+
+    public Map<String, ApiMethodInfo> getRestfulApiInfos() {
+        return restfulApiInfos;
     }
 
     public ApiMethodInfo getApiInfo(String api) {
@@ -69,13 +79,19 @@ public class ApiInfoCollector {
                 for (String superiorPath : classInfo.getPaths()) {
                     int nodePathLength = methodInfo.getPaths().length;
                     for (int i = 0; i < nodePathLength; ++i) {
-                        String path = superiorPath + methodInfo.getPaths()[i];
+                        String path = String.format("/%s/%s", superiorPath, methodInfo.getPaths()[i])
+                                          .replaceAll("(?<=/)/", "")
+                                          .replaceAll("(?<=.)/$", "");
                         methodInfo.getPaths()[i] = path;
 
                         for (String type : methodInfo.getTypes()) {
-                            String api = path + " " + type;
+                            String api = String.format("%s %s", path, type);
                             apis.add(api);
                             apiInfos.put(api, methodInfo);
+                            if (methodInfo.isRestful()) {
+                                restfulApis.add(api);
+                                restfulApiInfos.put(api, methodInfo);
+                            }
                         }
                     }
                 }
