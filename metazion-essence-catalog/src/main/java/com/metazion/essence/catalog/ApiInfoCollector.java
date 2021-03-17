@@ -22,6 +22,7 @@ public class ApiInfoCollector {
     private final Set<String> restfulApis = new TreeSet<>();
     private final Map<String, ApiMethodInfo> apiInfos = new TreeMap<>();
     private final Map<String, ApiMethodInfo> restfulApiInfos = new TreeMap<>();
+    private final Map<String, TypeClassInfo> methodTypeInfoCache = new TreeMap<>();
     private ApplicationContext applicationContext;
     private ApiConfigurationProperties apiConfigurationProperties;
 
@@ -176,6 +177,8 @@ public class ApiInfoCollector {
     }
 
     private void collectMethodCommonInfo(Method method, ApiMethodInfo methodInfo) {
+        methodTypeInfoCache.clear();
+
         methodInfo.setName(method.getName());
         methodInfo.setReturnType(getTypeClassInfo(method.getReturnType(), method.getGenericReturnType()));
 
@@ -253,26 +256,35 @@ public class ApiInfoCollector {
     }
 
     private TypeClassInfo getTypeClassInfo(Class<?> clazz, Type type) {
-        TypeClassInfo classInfo = new TypeClassInfo();
-        classInfo.setCanonicalName(clazz.getCanonicalName());
-
+        String typeName = clazz.getCanonicalName();
         if (type instanceof ParameterizedType) {
-            String typeName = type.getTypeName()
-                                  .replaceAll("<", "&lt;")
-                                  .replaceAll(">", "&gt;");
-            classInfo.setCanonicalName(typeName);
+            typeName = type.getTypeName()
+                           .replaceAll("<", "&lt;")
+                           .replaceAll(">", "&gt;");
         }
+
+        TypeClassInfo classInfo = new TypeClassInfo();
+        classInfo.setCanonicalName(typeName);
+
+        if (methodTypeInfoCache.containsKey(typeName)) {
+            return classInfo;
+        }
+
+        methodTypeInfoCache.put(typeName, classInfo);
 
         if (!clazz.isPrimitive() && !"java.lang.String".equals(clazz.getCanonicalName())) {
             Field[] declaredFields = clazz.getDeclaredFields();
             for (Field field : declaredFields) {
+                if (Modifier.isStatic(field.getModifiers())) {
+                    continue;
+                }
+
                 TypeFieldInfo fieldInfo = new TypeFieldInfo();
                 fieldInfo.setName(field.getName());
                 fieldInfo.setType(getTypeClassInfo(field.getType(), field.getGenericType()));
                 classInfo.addFieldInfos(fieldInfo);
             }
         }
-
         return classInfo;
     }
 
@@ -280,7 +292,7 @@ public class ApiInfoCollector {
         return paths.length > 0 ? paths : new String[]{""};
     }
 
-    public boolean checkPatternMatch(String regex, String input) {
+    private boolean checkPatternMatch(String regex, String input) {
         try {
             return Pattern.matches(regex, input);
         } catch (Exception e) {
