@@ -21,21 +21,21 @@ public class JwtKit {
         long expireMS = Instant.now().plusNanos(duration.toNanos()).toEpochMilli();
         Date expireDate = new Date(expireMS);
         return Jwts.builder()
-                   .setClaims(claims)
-                   .setExpiration(expireDate)
-                   .signWith(SignatureAlgorithm.HS256, key)
-                   .compact();
+            .setClaims(claims)
+            .setExpiration(expireDate)
+            .signWith(SignatureAlgorithm.HS256, key)
+            .compact();
     }
 
     public static Optional<Map<String, Object>> validateHashToken(String token, String key) {
         try {
             Claims claims = Jwts.parser()
-                                .setSigningKey(key)
-                                .parseClaimsJws(token)
-                                .getBody();
+                .setSigningKey(key)
+                .parseClaimsJws(token)
+                .getBody();
             return Optional.ofNullable(claims);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            logger.debug("{}", e);
         }
 
         return Optional.empty();
@@ -45,21 +45,21 @@ public class JwtKit {
         long expireMS = Instant.now().plusNanos(duration.toNanos()).toEpochMilli();
         Date expireDate = new Date(expireMS);
         return Jwts.builder()
-                   .setClaims(claims)
-                   .setExpiration(expireDate)
-                   .signWith(SignatureAlgorithm.RS256, key)
-                   .compact();
+            .setClaims(claims)
+            .setExpiration(expireDate)
+            .signWith(SignatureAlgorithm.RS256, key)
+            .compact();
     }
 
     public static Optional<Map<String, Object>> validateRsaToken(String token, Key key) {
         try {
             Claims claims = Jwts.parser()
-                                .setSigningKey(key)
-                                .parseClaimsJws(token)
-                                .getBody();
+                .setSigningKey(key)
+                .parseClaimsJws(token)
+                .getBody();
             return Optional.ofNullable(claims);
         } catch (Exception e) {
-            logger.debug(e.toString());
+            logger.debug("{}", e);
         }
 
         return Optional.empty();

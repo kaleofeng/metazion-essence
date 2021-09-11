@@ -81,8 +81,8 @@ public class ApiInfoCollector {
                     int nodePathLength = methodInfo.getPaths().length;
                     for (int i = 0; i < nodePathLength; ++i) {
                         String path = String.format("/%s/%s", superiorPath, methodInfo.getPaths()[i])
-                                          .replaceAll("(?<=/)/", "")
-                                          .replaceAll("(?<=.)/$", "");
+                            .replaceAll("(?<=/)/", "")
+                            .replaceAll("(?<=.)/$", "");
                         methodInfo.getPaths()[i] = path;
 
                         for (String type : methodInfo.getTypes()) {
@@ -259,8 +259,8 @@ public class ApiInfoCollector {
         String typeName = clazz.getCanonicalName();
         if (type instanceof ParameterizedType) {
             typeName = type.getTypeName()
-                           .replaceAll("<", "&lt;")
-                           .replaceAll(">", "&gt;");
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;");
         }
 
         TypeClassInfo classInfo = new TypeClassInfo();

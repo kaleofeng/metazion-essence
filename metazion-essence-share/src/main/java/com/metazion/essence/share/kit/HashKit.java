@@ -16,7 +16,7 @@ public class HashKit {
             digest.update(bytes);
             return digest.digest();
         } catch (NoSuchAlgorithmException e) {
-            logger.debug(e.toString());
+            logger.debug("{}", e);
         }
         return "".getBytes();
     }

@@ -22,7 +22,7 @@ public class RsaKit {
             return keyFactory.generatePublic(x509EncodedKeySpec);
 
         } catch (Exception e) {
-            logger.warn(e.toString());
+            logger.warn("{}", e);
         }
         return null;
     }
@@ -35,7 +35,7 @@ public class RsaKit {
             return keyFactory.generatePrivate(x509EncodedKeySpec);
 
         } catch (Exception e) {
-            logger.warn(e.toString());
+            logger.warn("{}", e);
         }
         return null;
     }
