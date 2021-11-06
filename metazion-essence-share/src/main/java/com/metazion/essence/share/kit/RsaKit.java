@@ -20,9 +20,8 @@ public class RsaKit {
             X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(byteKey);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePublic(x509EncodedKeySpec);
-
         } catch (Exception e) {
-            logger.warn("{}", e);
+            logger.warn("", e);
         }
         return null;
     }
@@ -33,9 +32,8 @@ public class RsaKit {
             PKCS8EncodedKeySpec x509EncodedKeySpec = new PKCS8EncodedKeySpec(byteKey);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePrivate(x509EncodedKeySpec);
-
         } catch (Exception e) {
-            logger.warn("{}", e);
+            logger.warn("", e);
         }
         return null;
     }

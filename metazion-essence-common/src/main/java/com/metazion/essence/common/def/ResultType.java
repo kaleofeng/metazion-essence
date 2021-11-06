@@ -8,7 +8,7 @@ public enum ResultType {
     CONSTRAINT_VIOLATION(20003),
     ARGUMENT_INVALID(20004);
 
-    private int code;
+    private final int code;
 
     ResultType(int code) {
         this.code = code;

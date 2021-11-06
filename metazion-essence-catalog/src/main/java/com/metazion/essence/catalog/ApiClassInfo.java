@@ -13,7 +13,7 @@ public class ApiClassInfo {
     private String canonicalName;
     private String[] paths;
     private boolean restful;
-    private Set<ApiMethodInfo> methodInfos = new TreeSet<>(Comparator.comparing(o -> o.getName()));
+    private Set<ApiMethodInfo> methodInfos = new TreeSet<>(Comparator.comparing(ApiMethodInfo::getName));
 
     public String getSimpleName() {
         return simpleName;

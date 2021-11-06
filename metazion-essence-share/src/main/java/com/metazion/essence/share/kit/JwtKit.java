@@ -35,7 +35,7 @@ public class JwtKit {
                 .getBody();
             return Optional.ofNullable(claims);
         } catch (Exception e) {
-            logger.debug("{}", e);
+            logger.debug("", e);
         }
 
         return Optional.empty();
@@ -59,7 +59,7 @@ public class JwtKit {
                 .getBody();
             return Optional.ofNullable(claims);
         } catch (Exception e) {
-            logger.debug("{}", e);
+            logger.debug("", e);
         }
 
         return Optional.empty();

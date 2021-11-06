@@ -15,7 +15,7 @@ public class UrlKit {
         try {
             return URLEncoder.encode(url, encoding);
         } catch (UnsupportedEncodingException e) {
-            logger.debug("{}", e);
+            logger.debug("", e);
         }
         return url;
     }
@@ -24,7 +24,7 @@ public class UrlKit {
         try {
             return URLDecoder.decode(url, encoding);
         } catch (UnsupportedEncodingException e) {
-            logger.debug("{}", e);
+            logger.debug("", e);
         }
         return url;
     }
