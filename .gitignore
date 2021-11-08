@@ -1,31 +1,9 @@
-.gradle
 build/
 out/
 log/
-!gradle/wrapper/gradle-wrapper.jar
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-
-### IntelliJ IDEA ###
+.gradle
 .idea
-*.iws
-*.iml
-*.ipr
+.vs
 
-### NetBeans ###
-nbproject/private/
-build/
-nbbuild/
-dist/
-nbdist/
-.nb-gradle/
-
-### Python ###
-__pycache__/
-*pyc
+.DS_Store
